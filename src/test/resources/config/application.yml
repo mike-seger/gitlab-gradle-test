@@ -1,12 +1,3 @@
 gitlab-gradle-test:
   remote-port: 10080
   hello-name: 学中文
-
-logging.level:
-  org:
-    springframework:
-      scheduling: warn
-    apache:
-      catalina: warn
-    web:
-      servlet: warn
