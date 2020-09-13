@@ -1,7 +1,7 @@
 image: gradle:jdk11
 
-#variables:
-#  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -22,7 +22,8 @@ test:
   stage: test
   script:
     - java -jar build/libs/*.jar &
-    - timeout 30 sh -c 'until nc -z $0 $1; do sleep 0.5; done' localhost 8080
+    - javac -source 11 -target 11 -d build src/test/java/Wait4Net.java
+    - java -cp build Wait4Net http://localhost:10080/greeting 200 5000
     - gradle check
   cache:
     key: "$CI_COMMIT_REF_NAME"
