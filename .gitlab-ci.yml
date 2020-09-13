@@ -22,7 +22,7 @@ test:
   stage: test
   script:
     - java -jar build/libs/*.jar &
-    - sleep 10 # use a health check instead
+    - timeout 30 sh -c 'until nc -z $0 $1; do sleep 0.5; done' localhost 8080
     - gradle check
   cache:
     key: "$CI_COMMIT_REF_NAME"
