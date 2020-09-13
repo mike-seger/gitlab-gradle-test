@@ -37,7 +37,7 @@ test:
       - .gradle
 
 report:
-  stage: deploy
+  stage: .post
   script:
     - cat /builds/test/demo1/build/reports/tests/test/index.html
   cache:
