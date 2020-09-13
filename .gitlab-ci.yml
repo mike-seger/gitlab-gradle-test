@@ -27,7 +27,19 @@ build:
 
 test:
   stage: test
-  script: ./gradlew check
+  script:
+    - ./gradlew check
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - build
+      - .gradle
+
+report:
+  stage: report
+  script:
+    - cat /builds/test/demo1/build/reports/tests/test/index.html
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
