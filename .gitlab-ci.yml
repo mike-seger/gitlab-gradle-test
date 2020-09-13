@@ -21,6 +21,8 @@ build:
 test:
   stage: test
   script:
+    - java -jar build/libs/*.jar &
+    - sleep 10 # use a health check instead
     - gradle check
   cache:
     key: "$CI_COMMIT_REF_NAME"
