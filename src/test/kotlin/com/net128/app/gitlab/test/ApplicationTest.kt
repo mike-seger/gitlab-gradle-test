@@ -1,4 +1,4 @@
-package com.net128.app.gitlab
+package com.net128.app.gitlab.test
 
 import com.fasterxml.jackson.module.kotlin.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,6 +11,7 @@ import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.time.Duration
 
 @SpringBootTest
 class ApplicationTest {
@@ -30,6 +31,7 @@ class ApplicationTest {
             URLEncoder.encode(helloName, Charsets.UTF_8)
         val request = HttpRequest.newBuilder()
             .uri(URI.create(url))
+            .timeout(Duration.ofMillis(10000))
             .build()
         val response: HttpResponse<String> = client.send(request,
             HttpResponse.BodyHandlers.ofString())

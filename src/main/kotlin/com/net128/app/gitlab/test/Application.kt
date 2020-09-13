@@ -1,4 +1,4 @@
-package com.net128.app.gitlab
+package com.net128.app.gitlab.test
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
