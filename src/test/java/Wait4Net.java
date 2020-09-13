@@ -1,3 +1,4 @@
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
@@ -26,8 +27,8 @@ public class Wait4Net {
         long timeoutMillis = Long.parseLong(args[2]);
         if(args[0].matches("^https*://.*")) {
             List<Integer> statusCodes = Stream.of(args[1].split(","))
-                    .map(Integer::parseInt)
-                    .collect(Collectors.toList());
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
             wait4Net.waitForHttpStatus(args[0], statusCodes, timeoutMillis);
         } else {
             wait4Net.waitForPort(args[0], Integer.parseInt(args[1]), timeoutMillis);
@@ -78,10 +79,23 @@ public class Wait4Net {
                 if(expectedStatuses.contains(response.statusCode())) {
                     return;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
+                if(e instanceof ConnectException) {
+                    continue;
+                }
                 log(e.getMessage());
             }
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Aborted", e);
+            }
         }
+
+        log("Timeout");
+        System.exit(1);
     }
 
     private void log(String message) {
