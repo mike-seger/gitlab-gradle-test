@@ -29,13 +29,13 @@ public class Wait4Net {
             List<Integer> statusCodes = Stream.of(args[1].split(","))
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
-            wait4Net.waitForHttpStatus(args[0], statusCodes, timeoutMillis);
+            wait4Net.wait4HttpStatus(args[0], statusCodes, timeoutMillis);
         } else {
-            wait4Net.waitForPort(args[0], Integer.parseInt(args[1]), timeoutMillis);
+            wait4Net.wait4Port(args[0], Integer.parseInt(args[1]), timeoutMillis);
         }
     }
 
-    public void waitForPort(String hostname, int port, long timeoutMs) {
+    public void wait4Port(String hostname, int port, long timeoutMs) {
         log("Waiting for port " + port);
         long startTs = System.currentTimeMillis();
         boolean scanning = true;
@@ -64,7 +64,7 @@ public class Wait4Net {
         log("Port " + port + " ready.");
     }
 
-    public void waitForHttpStatus(String url, Collection<Integer> expectedStatuses, long timeoutMS) {
+    public void wait4HttpStatus(String url, Collection<Integer> expectedStatuses, long timeoutMS) {
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
