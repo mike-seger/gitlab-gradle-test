@@ -1,4 +1,4 @@
-package com.example.demo1
+package com.net128.app.gitlab
 
 import com.fasterxml.jackson.module.kotlin.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,11 +13,11 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 @SpringBootTest
-class Demo1ApplicationTest {
-    @Value("\${demo1.remote-port}")
+class ApplicationTest {
+    @Value("\${gitlab-gradle-test.remote-port}")
     private val remotePort: Int = 8080
 
-    @Value("\${demo1.hello-name}")
+    @Value("\${gitlab-gradle-test.hello-name}")
     private val helloName: String = "World"
 
     val mapper = jacksonObjectMapper()

@@ -1,4 +1,4 @@
-package com.example.demo1
+package com.net128.app.gitlab
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.concurrent.atomic.AtomicLong
 
 @SpringBootApplication
-class Demo1Application
+class Application
 
 fun main(args: Array<String>) {
-	runApplication<Demo1Application>(*args)
+	runApplication<Application>(*args)
 }
 
 @RestController
