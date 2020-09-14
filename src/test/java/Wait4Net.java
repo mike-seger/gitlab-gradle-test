@@ -1,3 +1,6 @@
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -7,6 +10,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -19,9 +26,10 @@ import java.util.stream.Stream;
 public class Wait4Net {
     public static void main(String[] args) {
         Wait4Net wait4Net =new Wait4Net();
+        long started = System.currentTimeMillis();
         if(args.length!=3) {
             wait4Net.log("Expected 3 arguments:" +
-                "\nwaitForHttpStatus: url statuscode[,statuscode]* timeoutMs)"+
+                "\nwaitForHttpStatus: url status-code[,status-code]* timeoutMs)"+
                 "\nwaitForPort: hostname port timeoutMs");
         }
         long timeoutMillis = Long.parseLong(args[2]);
@@ -33,6 +41,7 @@ public class Wait4Net {
         } else {
             wait4Net.wait4Port(args[0], Integer.parseInt(args[1]), timeoutMillis);
         }
+        wait4Net.log("OK: "+(System.currentTimeMillis()-started)+" ms");
     }
 
     public void wait4Port(String hostname, int port, long timeoutMs) {
@@ -65,7 +74,7 @@ public class Wait4Net {
     }
 
     public void wait4HttpStatus(String url, Collection<Integer> expectedStatuses, long timeoutMS) {
-        HttpClient client = HttpClient.newBuilder().build();
+        HttpClient client = HttpClient.newBuilder().sslContext(trustingSSLContext()).build();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .timeout(Duration.ofMillis(timeoutMS))
@@ -96,6 +105,33 @@ public class Wait4Net {
 
         log("Timeout");
         System.exit(1);
+    }
+
+    private SSLContext trustingSSLContext() {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() { return null; }
+
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
+
+        System.setProperty("jdk.internal.httpclient.disableHostnameVerification", Boolean.TRUE.toString());
+        try {
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+            return sslContext;
+        } catch (NoSuchAlgorithmException|KeyManagementException e) {
+            e.printStackTrace();
+            System.exit(1);
+            return null;
+        }
     }
 
     private void log(String message) {
