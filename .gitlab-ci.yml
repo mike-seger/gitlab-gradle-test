@@ -23,7 +23,7 @@ test:
   script:
     - java -jar build/libs/*.jar &
     - javac -source 11 -target 11 -d build src/test/java/Wait4Net.java
-    - java -cp build Wait4Net "http://localhost:10080/greeting" 200 35000
+    - java -cp build Wait4Net "http://localhost:10080/greeting" 200 40000
     - gradle check
   cache:
     key: "$CI_COMMIT_REF_NAME"
